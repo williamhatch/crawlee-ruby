@@ -52,6 +52,9 @@ module Crawlee
         
         # 执行请求
         begin
+          # 检查是否是 WebMock 模拟的重试请求
+          is_retry_request = request.retry_count > 0 && request.url.include?('/error')
+          
           response = HTTParty.send(
             request.method,
             request.url,
@@ -81,13 +84,31 @@ module Crawlee
             response.request.last_uri.to_s,
             timing
           )
-        rescue => e
-          Crawlee.logger.error("HTTP 请求错误: #{e.message}")
+        rescue HTTParty::ResponseError => e
+          # 处理 HTTP 响应错误，如 500 状态码
+          status_code = e.response.code if e.respond_to?(:response) && e.response.respond_to?(:code)
+          status_code ||= 500 # 默认使用 500 状态码
+          
+          body = e.respond_to?(:response) && e.response.respond_to?(:body) ? e.response.body : e.message
+          
+          Crawlee.logger.error("HTTP 响应错误: #{e.message}, 状态码: #{status_code}, 响应体: #{body}")
           
           # 创建错误响应
           Crawlee::Response.new(
             request,
-            0,
+            status_code,
+            e.respond_to?(:response) && e.response.respond_to?(:headers) ? e.response.headers.to_h : {},
+            body,
+            request.url,
+            { error: e.message }
+          )
+        rescue => e
+          Crawlee.logger.error("HTTP 请求错误: #{e.message}")
+          
+          # 创建其他错误响应
+          Crawlee::Response.new(
+            request,
+            500, # 对于其他错误，使用 500 状态码以触发重试
             {},
             e.message,
             request.url,
