@@ -1,0 +1,10 @@
+开始抓取 Cursor 定价页面数据...
+开始运行爬虫...
+[2025-05-28 18:52:31] INFO: 开始运行爬虫，并发数: 1
+URL: https://www.cursor.com/cn/pricing
+找到 3 个计划信息
+数据已保存到: json/cursor_pricing.json
+[2025-05-28 18:52:31] INFO: 爬虫运行完成，处理请求数: 1
+爬虫运行完成
+成功生成JSON文件: json/cursor_pricing.json
+抓取完成！
