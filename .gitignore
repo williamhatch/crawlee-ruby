@@ -26,6 +26,7 @@ Thumbs.db
 /test/tmp/
 /test/version_tmp/
 /tmp/
+/tmp/test_storage/
 
 # 忽略依赖管理文件
 /.bundle/
