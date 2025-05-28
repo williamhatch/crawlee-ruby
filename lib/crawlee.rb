@@ -12,6 +12,7 @@ require_relative "crawlee/crawlers/base_crawler"
 require_relative "crawlee/crawlers/http_crawler"
 require_relative "crawlee/crawlers/browser_crawler"
 require_relative "crawlee/crawlers/adaptive_crawler"
+require_relative "crawlee/fix_encoding"
 
 # Crawlee 是一个用于构建可靠爬虫的 Ruby 库
 # 它处理网站封锁、代理轮换和浏览器自动化等问题

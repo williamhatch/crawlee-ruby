@@ -61,13 +61,13 @@ module Crawlee
     # 检查响应是否为 HTML
     # @return [Boolean] 如果内容类型为 HTML 则为 true
     def html?
-      content_type&.include?('text/html')
+      !!(content_type && content_type.include?('text/html'))
     end
 
     # 检查响应是否为 JSON
     # @return [Boolean] 如果内容类型为 JSON 则为 true
     def json?
-      content_type&.include?('application/json')
+      !!(content_type && content_type.include?('application/json'))
     end
 
     # 将响应体解析为 HTML
@@ -76,16 +76,20 @@ module Crawlee
       @parsed_html ||= Nokogiri::HTML(@body)
     end
 
-    # 将响应体解析为 JSON
-    # @return [Hash, Array] 解析后的 JSON 对象
+    # 获取 JSON 响应体
+    # @return [Hash, Array] 解析后的 JSON 数据
     # @raise [JSON::ParserError] 如果 JSON 解析失败
     def json
       return @parsed_json if @parsed_json
+      
       require 'json'
-      @parsed_json = JSON.parse(@body)
-    rescue JSON::ParserError => e
-      Crawlee.logger.error("JSON 解析错误: #{e.message}")
-      raise
+      begin
+        @parsed_json = JSON.parse(@body)
+      rescue JSON::ParserError => e
+        # 只在调试模式下记录解析错误
+        Crawlee.logger.debug("JSON 解析错误: #{e.message}")
+        raise
+      end
     end
 
     # 将响应转换为哈希

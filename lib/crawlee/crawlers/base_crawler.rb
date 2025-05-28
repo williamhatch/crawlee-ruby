@@ -69,20 +69,39 @@ module Crawlee
         pool = Concurrent::FixedThreadPool.new(@options[:max_concurrency])
         
         # 处理请求队列
+        active_requests = Concurrent::AtomicFixnum.new(0)
+        
         while @running
           # 获取下一个请求
           request = @request_queue.next_request
           
-          # 如果队列为空，则退出循环
+          # 如果队列为空，但还有正在处理的请求，等待一会再检查
           if request.nil?
-            break if @options[:exit_on_empty_queue]
-            sleep(1)
-            next
+            if active_requests.value > 0
+              # 还有正在处理的请求，等待一会再检查
+              sleep(0.1)
+              next
+            elsif @options[:exit_on_empty_queue]
+              # 队列为空且没有正在处理的请求，退出循环
+              break
+            else
+              # 等待新的请求
+              sleep(1)
+              next
+            end
           end
+          
+          # 增加活跃请求计数
+          active_requests.increment
           
           # 提交请求到线程池
           pool.post do
-            process_request(request)
+            begin
+              process_request(request)
+            ensure
+              # 减少活跃请求计数
+              active_requests.decrement
+            end
           end
         end
         

@@ -238,14 +238,27 @@ module Crawlee
           href = element['href']
           next if href.nil? || href.empty? || href.start_with?('#')
           
+          # 处理可能包含单引号或双引号的 URL
+          if href.include?("'") || href.include?('"')
+            href = href.gsub(/['"]/,'') 
+          end
+          
           # 构建完整 URL
           begin
-            URI.join(@response.url, href).to_s
-          rescue URI::InvalidURIError
+            if href =~ /\Ahttps?:\/\//
+              # 已经是完整的 URL
+              href
+            else
+              URI.join(@response.url, href).to_s
+            end
+          rescue URI::InvalidURIError => e
+            Crawlee.logger.debug("Invalid URI: #{href} - #{e.message}")
             nil
           end
         end.compact
         
+        # 确保所有链接都被添加到队列
+        Crawlee.logger.debug("Enqueueing links: #{links.inspect}")
         @crawler.enqueue_links(links, options)
       end
       

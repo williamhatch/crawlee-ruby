@@ -43,7 +43,19 @@ module Crawlee
     # @return [Hash] 更新后的会话
     def update_cookies(domain, cookies)
       @mutex.synchronize do
-        session = get_session(domain)
+        # 直接从 @sessions 获取会话，避免调用 get_session 导致死锁
+        session = @sessions[domain]
+        
+        # 如果会话不存在，创建一个新会话
+        unless session
+          session = create_session(domain)
+          @sessions[domain] = session
+          @session_usage[domain] = 0
+        end
+        
+        # 更新会话使用计数
+        @session_usage[domain] = (@session_usage[domain] || 0) + 1
+        
         session[:cookies] ||= []
         
         # 合并新的 Cookie
@@ -94,10 +106,14 @@ module Crawlee
     # 获取会话池的统计信息
     # @return [Hash] 统计信息
     def stats
+      # 将 Concurrent::Map 转换为普通 Hash
+      usage_hash = {}
+      @session_usage.each_pair { |k, v| usage_hash[k] = v }
+      
       {
         size: @sessions.size,
-        domains: @sessions.keys,
-        usage: @session_usage.to_h
+        domains: @sessions.keys.to_a,
+        usage: usage_hash
       }
     end
 

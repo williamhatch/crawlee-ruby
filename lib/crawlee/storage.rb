@@ -237,10 +237,16 @@ module Crawlee
           # 读取当前数据
           dataset = read_json_file(@data_file) || []
           
+          # 确保所有键都是符号形式的
+          symbolized_data = {}
+          data.each do |key, value|
+            symbolized_data[key.to_sym] = value
+          end
+          
           # 添加 ID 和时间戳
-          data_with_id = data.dup
-          data_with_id['id'] = SecureRandom.uuid
-          data_with_id['createdAt'] = Time.now.to_i
+          data_with_id = symbolized_data
+          data_with_id[:id] = SecureRandom.uuid
+          data_with_id[:createdAt] = Time.now.to_i
           
           # 添加数据到数据集
           dataset << data_with_id
@@ -254,7 +260,16 @@ module Crawlee
       # @return [Array<Hash>] 数据集中的所有数据
       def get_data
         @mutex.synchronize do
-          read_json_file(@data_file) || []
+          data = read_json_file(@data_file) || []
+          
+          # 确保所有数据的键都是符号形式的
+          data.map do |item|
+            symbolized_item = {}
+            item.each do |key, value|
+              symbolized_item[key.to_sym] = value
+            end
+            symbolized_item
+          end
         end
       end
       
