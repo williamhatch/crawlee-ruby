@@ -25,6 +25,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "faker", "~> 3.2"  # Generate random data for fingerprinting
   
   # Specify which files are included in the gem
-  spec.files = Dir.glob("lib/**/*") + %w[LICENSE.txt README.md]
+  spec.files = Dir.glob("lib/**/*") + %w[LICENSE README.md]
   spec.require_paths = ["lib"]
 end
