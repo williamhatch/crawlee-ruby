@@ -1,0 +1,54 @@
+# 忽略操作系统生成的文件
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 忽略编辑器生成的文件
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# 忽略 Ruby 相关文件
+*.gem
+*.rbc
+/.config
+/coverage/
+/InstalledFiles
+/pkg/
+/spec/reports/
+/spec/examples.txt
+/test/tmp/
+/test/version_tmp/
+/tmp/
+
+# 忽略依赖管理文件
+/.bundle/
+/vendor/bundle
+/lib/bundler/man/
+Gemfile.lock
+
+# 忽略日志文件
+/log/
+/logs/
+*.log
+
+# 忽略爬虫生成的数据和存储文件
+/storage/
+/json/
+
+# 忽略环境变量文件
+.env
+.env.*
+
+# 忽略文档生成文件
+/doc/
+/rdoc/
+/.yardoc/
+/_yardoc/
+/doc/
