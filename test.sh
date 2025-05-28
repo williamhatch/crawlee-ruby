@@ -282,6 +282,186 @@ else
   debug_log "Cursor 定价页面爬虫运行失败，退出码: $cursor_status"
 fi
 
+# 6. 运行电子商务爬虫示例
+echo -e "\n${YELLOW}6. 运行电子商务爬虫示例${NC}"
+echo "------------------------------"
+debug_log "开始运行电子商务爬虫示例"
+
+run_with_timeout "ruby examples/ecommerce_crawler.rb 2>&1 | tee logs/ecommerce_crawler.log" $TIMEOUT "运行电子商务爬虫示例"
+ecommerce_status=$?
+
+if [ $ecommerce_status -eq 0 ]; then
+  debug_log "电子商务爬虫示例运行成功"
+else
+  debug_log "电子商务爬虫示例运行失败，退出码: $ecommerce_status"
+fi
+
+# 7. 运行新闻爬虫示例
+echo -e "\n${YELLOW}7. 运行新闻爬虫示例${NC}"
+echo "------------------------------"
+debug_log "开始运行新闻爬虫示例"
+
+run_with_timeout "ruby examples/news_crawler.rb 2>&1 | tee logs/news_crawler.log" $TIMEOUT "运行新闻爬虫示例"
+news_status=$?
+
+if [ $news_status -eq 0 ]; then
+  debug_log "新闻爬虫示例运行成功"
+else
+  debug_log "新闻爬虫示例运行失败，退出码: $news_status"
+fi
+
+# 8. 运行微博热搜爬虫示例
+echo -e "\n${YELLOW}8. 运行微博热搜爬虫示例${NC}"
+echo "------------------------------"
+debug_log "开始运行微博热搜爬虫示例"
+
+run_with_timeout "ruby examples/weibo_hot_search_crawler.rb 2>&1 | tee logs/weibo_hot_search_crawler.log" $((TIMEOUT * 2)) "运行微博热搜爬虫示例"
+weibo_status=$?
+
+if [ $weibo_status -eq 0 ]; then
+  debug_log "微博热搜爬虫示例运行成功"
+else
+  debug_log "微博热搜爬虫示例运行失败，退出码: $weibo_status"
+fi
+
+# 9. 运行京东产品爬虫示例
+echo -e "\n${YELLOW}9. 运行京东产品爬虫示例${NC}"
+echo "------------------------------"
+debug_log "开始运行京东产品爬虫示例"
+
+run_with_timeout "ruby examples/jd_product_crawler.rb 2>&1 | tee logs/jd_product_crawler.log" $((TIMEOUT * 2)) "运行京东产品爬虫示例"
+jd_status=$?
+
+if [ $jd_status -eq 0 ]; then
+  debug_log "京东产品爬虫示例运行成功"
+else
+  debug_log "京东产品爬虫示例运行失败，退出码: $jd_status"
+fi
+
+# 10. 运行知乎话题爬虫示例
+echo -e "\n${YELLOW}10. 运行知乎话题爬虫示例${NC}"
+echo "------------------------------"
+debug_log "开始运行知乎话题爬虫示例"
+
+run_with_timeout "ruby examples/zhihu_topic_crawler.rb 2>&1 | tee logs/zhihu_topic_crawler.log" $((TIMEOUT * 2)) "运行知乎话题爬虫示例"
+zhihu_status=$?
+
+if [ $zhihu_status -eq 0 ]; then
+  debug_log "知乎话题爬虫示例运行成功"
+else
+  debug_log "知乎话题爬虫示例运行失败，退出码: $zhihu_status"
+fi
+
+# 11. 性能测试
+echo -e "\n${YELLOW}11. 运行性能测试${NC}"
+echo "------------------------------"
+debug_log "开始运行性能测试"
+
+# 创建性能测试脚本
+cat > performance_test.rb << 'EOL'
+# frozen_string_literal: true
+
+require 'crawlee'
+require 'benchmark'
+require 'json'
+
+# 性能测试配置
+CONCURRENCY_LEVELS = [1, 2, 5, 10]
+REQUEST_COUNTS = [10, 50, 100]
+TEST_URL = 'https://example.com'
+
+# 结果存储
+results = []
+
+# 测试 HTTP 爬虫性能
+puts "\n测试 HTTP 爬虫性能..."
+CONCURRENCY_LEVELS.each do |concurrency|
+  REQUEST_COUNTS.each do |count|
+    puts "\n测试并发数: #{concurrency}, 请求数: #{count}"
+    
+    # 创建爬虫
+    crawler = Crawlee::Crawlers::HttpCrawler.new(
+      max_concurrency: concurrency
+    )
+    
+    # 设置路由处理器
+    crawler.router.default_handler do |context|
+      # 简单处理，只获取标题
+      title = context.query_selector('title')&.text
+      context.save_data({
+        url: context.request.url,
+        title: title
+      })
+    end
+    
+    # 添加请求
+    count.times do |i|
+      crawler.enqueue("#{TEST_URL}?id=#{i}")
+    end
+    
+    # 测量性能
+    time = Benchmark.realtime do
+      crawler.run
+    end
+    
+    # 记录结果
+    results << {
+      crawler_type: 'HttpCrawler',
+      concurrency: concurrency,
+      request_count: count,
+      time_seconds: time.round(2),
+      requests_per_second: (count / time).round(2)
+    }
+    
+    puts "完成时间: #{time.round(2)} 秒"
+    puts "每秒请求数: #{(count / time).round(2)}"
+  end
+ end
+
+# 保存结果
+File.open('performance_results.json', 'w') do |file|
+  file.write(JSON.pretty_generate(results))
+end
+
+puts "\n性能测试完成，结果已保存到 performance_results.json"
+EOL
+
+# 运行性能测试
+run_with_timeout "ruby performance_test.rb 2>&1 | tee logs/performance_test.log" $((TIMEOUT * 3)) "运行性能测试"
+performance_status=$?
+
+if [ $performance_status -eq 0 ]; then
+  debug_log "性能测试运行成功"
+  
+  # 分析性能测试结果
+  if [ -f "performance_results.json" ]; then
+    echo -e "\n${YELLOW}性能测试结果摘要${NC}"
+    echo "------------------------------"
+    
+    # 使用 Ruby 解析并显示结果摘要
+    ruby -rjson -e '
+      results = JSON.parse(File.read("performance_results.json"))
+      puts "最佳性能配置:"
+      best = results.max_by { |r| r["requests_per_second"] }
+      puts "  并发数: #{best["concurrency"]}"
+      puts "  请求数: #{best["request_count"]}"
+      puts "  每秒请求数: #{best["requests_per_second"]}"
+      
+      puts "\n性能对比:"
+      results.group_by { |r| r["concurrency"] }.each do |concurrency, group|
+        puts "  并发数 #{concurrency}:"
+        group.each do |r|
+          puts "    请求数 #{r["request_count"]}: #{r["requests_per_second"]} 请求/秒"
+        end
+      end
+    '
+  else
+    echo -e "${RED}未找到性能测试结果文件${NC}"
+  fi
+else
+  debug_log "性能测试运行失败，退出码: $performance_status"
+fi
+
 # 总结测试结果
 echo -e "\n${YELLOW}测试结果摘要${NC}"
 echo "------------------------------"
@@ -290,8 +470,16 @@ echo -e "基本 HTTP 爬虫: $([ $http_status -eq 0 ] && echo -e "${GREEN}通过
 echo -e "浏览器爬虫: $([ $browser_status -eq 0 ] && echo -e "${GREEN}通过${NC}" || echo -e "${RED}失败${NC}")"
 echo -e "自适应爬虫: $([ $adaptive_status -eq 0 ] && echo -e "${GREEN}通过${NC}" || echo -e "${RED}失败${NC}")"
 echo -e "Cursor 定价页面爬虫: $([ $cursor_status -eq 0 ] && echo -e "${GREEN}通过${NC}" || echo -e "${RED}失败${NC}")"
+echo -e "电子商务爬虫: $([ $ecommerce_status -eq 0 ] && echo -e "${GREEN}通过${NC}" || echo -e "${RED}失败${NC}")"
+echo -e "新闻爬虫: $([ $news_status -eq 0 ] && echo -e "${GREEN}通过${NC}" || echo -e "${RED}失败${NC}")"
+echo -e "微博热搜爬虫: $([ $weibo_status -eq 0 ] && echo -e "${GREEN}通过${NC}" || echo -e "${RED}失败${NC}")"
+echo -e "京东产品爬虫: $([ $jd_status -eq 0 ] && echo -e "${GREEN}通过${NC}" || echo -e "${RED}失败${NC}")"
+echo -e "知乎话题爬虫: $([ $zhihu_status -eq 0 ] && echo -e "${GREEN}通过${NC}" || echo -e "${RED}失败${NC}")"
+echo -e "性能测试: $([ $performance_status -eq 0 ] && echo -e "${GREEN}通过${NC}" || echo -e "${RED}失败${NC}")"
 
 echo -e "\n${GREEN}测试完成！${NC}"
 debug_log "测试脚本执行结束时间: $(date)"
 echo "所有日志文件保存在 logs 目录中"
-echo "抓取的 Cursor 定价页面数据保存在 json 目录中"
+echo "抓取的数据保存在 json 目录中"
+echo "性能测试结果保存在 performance_results.json 文件中"
+
