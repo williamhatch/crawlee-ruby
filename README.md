@@ -1,16 +1,16 @@
 <h1 align="center">
     <img alt="Crawlee Ruby" src="https://via.placeholder.com/500x100?text=Crawlee+Ruby" width="500">
     <br>
-    <small>Ruby 版网络爬虫和浏览器自动化库</small>
+    <small>Web Scraping and Browser Automation Library for Ruby</small>
 </h1>
 
-## 致谢
+## Acknowledgements
 
-本项目是受 [Crawlee](https://crawlee.dev) 社区提供的 JavaScript 和 Python 版本的启发，作为兴趣项目开发的 Ruby 实现版本。在此特别感谢 Crawlee 社区的开发者们提供了如此优秀的爬虫框架，为本项目提供了宝贵的设计思路和参考。
+This project is inspired by the JavaScript and Python versions provided by the [Crawlee](https://crawlee.dev) community, developed as a Ruby implementation out of interest. Special thanks to the developers of the Crawlee community for providing such an excellent web scraping framework, which has provided valuable design ideas and references for this project.
 
-Crawlee 官方版本：
-- [Crawlee JavaScript](https://github.com/apify/crawlee) - 原始 JavaScript 实现
-- [Crawlee Python](https://github.com/apify/crawlee-python) - Python 实现版本
+Official Crawlee versions:
+- [Crawlee JavaScript](https://github.com/apify/crawlee) - Original JavaScript implementation
+- [Crawlee Python](https://github.com/apify/crawlee-python) - Python implementation
 
 <p align=center>
     <a href="https://rubygems.org/gems/crawlee">
@@ -24,13 +24,13 @@ Crawlee 官方版本：
     </a>
 </p>
 
-Crawlee Ruby 是一个全面的网络爬虫和数据提取框架，帮助您构建可靠的爬虫。快速且高效。
+Crawlee Ruby is a comprehensive web scraping and data extraction framework that helps you build reliable crawlers. Fast and efficient.
 
-> 🚀 Crawlee Ruby 是 Crawlee 生态系统的 Ruby 实现版本！
+> 🚀 Crawlee Ruby is the Ruby implementation of the Crawlee ecosystem!
 
-即使使用默认配置，您的爬虫也能表现得几乎与人类行为相似，轻松绕过现代网站的反爬虫保护。Crawlee Ruby 为您提供了爬取网页链接、提取数据并以机器可读格式持久存储的工具，无需担心技术细节。通过丰富的配置选项，您可以根据项目需求调整 Crawlee Ruby 的几乎任何方面。
+Even with the default configuration, your crawlers can behave almost like human behavior, easily bypassing modern website anti-scraping protections. Crawlee Ruby provides you with tools to crawl web links, extract data, and persistently store it in machine-readable formats, without worrying about technical details. Through rich configuration options, you can adjust almost any aspect of Crawlee Ruby according to your project needs.
 
-## 架构图
+## Architecture Diagram
 
 ```
 +---------------------+      +---------------------+
@@ -90,221 +90,209 @@ Crawlee Ruby 是一个全面的网络爬虫和数据提取框架，帮助您构�
 +---------------------+
 ```
 
-## 安装
+## Installation
 
-我们建议访问 Crawlee Ruby 文档中的入门教程获取更多信息。
+We recommend visiting the Getting Started tutorial in the Crawlee Ruby documentation for more information.
 
-Crawlee Ruby 可通过 RubyGems 安装，包名为 `crawlee`。此包包含核心功能，而额外功能可作为可选依赖项安装，以保持依赖项和包大小最小化。
+Crawlee Ruby can be installed via RubyGems, with the package name `crawlee`. This package includes core functionality, while additional features can be installed as optional dependencies to keep dependencies and package size minimal.
 
-要安装 Crawlee Ruby 及其所有功能，请运行以下命令：
+To install Crawlee Ruby and all its features, run the following command:
 
 ```sh
 gem install crawlee
 ```
 
-或者在您的 Gemfile 中添加：
+Or add to your Gemfile:
 
 ```ruby
 gem 'crawlee'
 ```
 
-然后运行：
+Then run:
 
 ```sh
 bundle install
 ```
 
-## 测试
+## Testing
 
-Crawlee Ruby 使用 RSpec 进行测试。要运行测试，请执行以下步骤：
+Crawlee Ruby uses RSpec for testing. To run the tests, follow these steps:
 
-1. 安装开发依赖：
+1. Install development dependencies:
 
 ```sh
 bundle install
 ```
 
-2. 运行测试：
+2. Run the tests:
 
 ```sh
 bundle exec rspec
 ```
 
-您可以运行特定的测试文件：
+You can run specific test files:
 
 ```sh
 bundle exec rspec spec/lib/crawlee/configuration_spec.rb
 ```
 
-或者运行特定的测试用例：
+Or run specific test cases:
 
 ```sh
 bundle exec rspec spec/lib/crawlee/request_spec.rb:10
 ```
 
-或者在您的 Gemfile 中添加：
-
-```ruby
-gem 'crawlee'
-```
-
-然后运行：
-
-```sh
-bundle install
-```
-
-验证 Crawlee Ruby 是否成功安装：
+Verify that Crawlee Ruby is successfully installed:
 
 ```sh
 ruby -e 'require "crawlee"; puts Crawlee::VERSION'
 ```
 
-## 示例
+## Examples
 
-### 基本 HTTP 爬虫
+### Basic HTTP Crawler
 
 ```ruby
 require 'crawlee'
 
-# 配置 Crawlee
+# Configure Crawlee
 Crawlee.configure do |config|
   config.max_concurrency = 10
   config.request_timeout = 30
 end
 
-# 创建 HTTP 爬虫
+# Create HTTP crawler
 crawler = Crawlee::Crawlers::HttpCrawler.new
 
-# 添加路由处理器
+# Add route handler
 crawler.router.add(/example\.com/) do |context|
-  # 提取数据
+  # Extract data
   title = context.query_selector('title')&.text
   
-  # 保存数据
+  # Save data
   context.save_data({
     url: context.request.url,
     title: title
   })
   
-  # 提取并跟踪链接
+  # Extract and follow links
   context.enqueue_links('a')
 end
 
-# 添加起始 URL
+# Add starting URL
 crawler.enqueue('https://example.com')
 
-# 运行爬虫
+# Run crawler
 crawler.run
 ```
 
-### 更多示例
+### More Examples
 
-请查看 `examples` 目录获取更多示例：
+Check out the `examples` directory for more examples:
 
-- 使用 Nokogiri 的基本爬虫
-- 使用 Ferrum 的浏览器爬虫
-- 自适应爬虫示例
-- 代理轮换示例
-- 数据存储示例
+- Basic crawler using Nokogiri
+- Browser crawler using Ferrum
+- Adaptive crawler examples
+- Proxy rotation examples
+- Data storage examples
 
-## 特性
+## Features
 
-为什么选择 Crawlee Ruby 作为网络爬虫和数据提取的首选？
+Why choose Crawlee Ruby for web scraping and data extraction?
 
-### 为什么使用 Crawlee Ruby 而不是随机的 HTTP 库和 HTML 解析器？
+### Why use Crawlee Ruby instead of a random HTTP library and HTML parser?
 
-- **HTTP 和浏览器爬取**的统一接口
-- 基于可用系统资源的自动**并行爬取**
-- 使用 Ruby 编写，具有**完整的文档**和**清晰的 API**
-- 错误或被封锁时自动**重试**
-- 集成的**代理轮换**和会话管理
-- 可配置的**请求路由** - 将 URL 定向到适当的处理程序
-- 用于爬取的持久化 **URL 队列**
-- 可插拔的表格数据和文件**存储**
-- 强大的**错误处理**
-- 基于**真实浏览器指纹**的反爬虫绕过
+- Unified interface for **HTTP & browser crawling**
+- Automatic **parallel crawling** based on available system resources
+- Written in Ruby with **complete documentation** and **clear API**
+- Automatic **retries** on errors or when you're getting blocked
+- Integrated **proxy rotation** and session management
+- Configurable **request routing** - direct URLs to the appropriate handlers
+- Persistent **queue for URLs** to crawl
+- Pluggable **storage** of both tabular data and files
+- Robust **error handling**
+- Anti-scraping bypass based on **real browser fingerprints**
 
-### 为什么使用 Crawlee Ruby 而不是其他 Ruby 爬虫框架？
+### Why use Crawlee Ruby instead of other Ruby scraping frameworks?
 
-- **现代设计** - 基于最新的 Ruby 实践和模式构建
-- **简单集成** - Crawlee 爬虫是常规 Ruby 脚本，无需额外的启动器执行器。这种灵活性允许将爬虫直接集成到其他应用程序中
-- **状态持久化** - 支持中断期间的状态持久化，通过避免在问题发生后从头重启爬取管道来节省时间和成本
-- **组织化数据存储** - 允许在单次爬取运行中保存多种类型的结果。提供多种存储选项（请参阅数据集和键值存储）
-- **高级会话管理** - 提供强大的会话池和 Cookie 管理功能，有效模拟真实用户行为
+- **Modern design** - Built on the latest Ruby practices and patterns
+- **Simple integration** - Crawlee crawlers are regular Ruby scripts, requiring no additional launcher executor. This flexibility allows to integrate a crawler directly into other applications
+- **State persistence** - Supports state persistence during interruptions, saving time and costs by avoiding the need to restart scraping pipelines from scratch after an issue
+- **Organized data storages** - Allows saving of multiple types of results in a single scraping run. Offers several storing options (see datasets and key-value stores)
+- **Advanced session management** - Provides robust session pool and cookie management capabilities, effectively simulating real user behavior
 
-## 快速入门
+## Quick Start
 
-### 1. 安装 Crawlee Ruby
+### 1. Install Crawlee Ruby
 
 ```sh
 gem install crawlee
 ```
 
-### 2. 创建您的第一个爬虫
+### 2. Create Your First Crawler
 
-创建一个名为 `my_crawler.rb` 的文件：
+Create a file named `my_crawler.rb`:
 
 ```ruby
 require 'crawlee'
 
-# 配置 Crawlee
+# Configure Crawlee
 Crawlee.configure do |config|
   config.max_concurrency = 5
 end
 
-# 创建 HTTP 爬虫
+# Create HTTP crawler
 crawler = Crawlee::Crawlers::HttpCrawler.new
 
-# 添加默认路由处理器
+# Add default route handler
 crawler.router.default_handler do |context|
-  puts "正在处理: #{context.request.url}"
+  puts "Processing: #{context.request.url}"
   
-  # 提取标题
+  # Extract title
   title = context.query_selector('title')&.text
-  puts "页面标题: #{title}"
+  puts "Page title: #{title}"
   
-  # 保存数据
+  # Save data
   context.save_data({
     url: context.request.url,
     title: title,
     crawled_at: Time.now.to_s
   })
   
-  # 提取并跟踪所有链接
+  # Extract and follow all links
   context.enqueue_links('a')
 end
 
-# 添加起始 URL
+# Add starting URL
 crawler.enqueue('https://example.com')
 
-# 运行爬虫
+# Run crawler
 crawler.run
 ```
 
-### 3. 运行爬虫
+### 3. Run the Crawler
 
 ```sh
 ruby my_crawler.rb
 ```
 
-## 文档
+## Documentation
 
-完整的文档可在 DeepWiki 中找到：[Crawlee Ruby 文档](https://deepwiki.example.com/crawlee-ruby)
+Complete documentation can be found in DeepWiki: [Crawlee Ruby Documentation](https://deepwiki.example.com/crawlee-ruby)
 
-## 在 Apify 平台上运行
+## Running on the Apify Platform
 
-Crawlee Ruby 可以在 [Apify 平台](https://apify.com)上运行，该平台提供了托管、扩展和监控您的爬虫的基础设施。
+Crawlee Ruby can be run on the [Apify platform](https://apify.com), which provides infrastructure for hosting, scaling, and monitoring your crawlers.
 
-## 支持与社区
+## Support & Community
 
-- **GitHub Issues**：如果您在使用 Crawlee Ruby 时遇到任何问题，请在我们的 [GitHub 仓库](https://github.com/example/crawlee-ruby/issues)上创建 issue
-- **讨论**：加入我们的[讨论区](https://github.com/example/crawlee-ruby/discussions)分享您的经验和问题
+- **GitHub Issues**: If you encounter any issues while using Crawlee Ruby, please create an issue on our [GitHub repository](https://github.com/example/crawlee-ruby/issues)
+- **Discussions**: Join our [discussion forum](https://github.com/example/crawlee-ruby/discussions) to share your experiences and questions
 
-## 贡献
+## Contributing
 
-我们欢迎任何形式的贡献！请查看我们的[贡献指南](CONTRIBUTING.md)了解更多信息。
+We welcome contributions of any kind! Please check out our [contribution guidelines](CONTRIBUTING.md) for more information.
 
-## 许可证
+## License
 
-本项目采用 MIT 许可证 - 有关详细信息，请参阅 [LICENSE](LICENSE) 文件。
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
