@@ -2,21 +2,24 @@
 
 require 'spec_helper'
 
-RSpec.describe Crawlee::HttpContext do
+RSpec.describe Crawlee::Crawlers::HttpContext do
   let(:crawler) { Crawlee::Crawlers::HttpCrawler.new }
   let(:request) { Crawlee::Request.new('https://example.com') }
   let(:response) do
-    Crawlee::Response.new(request, 
-      status_code: 200,
-      headers: { 'Content-Type' => 'text/html; charset=UTF-8' },
-      body: '<html><head><title>测试页面</title></head><body><a href="/page1">链接1</a><a href="/page2">链接2</a></body></html>'
+    Crawlee::Response.new(
+      request,
+      200,
+      { 'Content-Type' => 'text/html; charset=UTF-8' },
+      '<html><head><title>测试页面</title></head><body><a href="/page1">链接1</a><a href="/page2">链接2</a></body></html>',
+      'https://example.com',
+      {}
     )
   end
-  let(:context) { Crawlee::HttpContext.new(crawler, request, response) }
+  let(:context) { Crawlee::Crawlers::HttpContext.new(crawler, request, response) }
   
   describe '#initialize' do
     it '创建一个 HTTP 上下文实例' do
-      expect(context).to be_a(Crawlee::HttpContext)
+      expect(context).to be_a(Crawlee::Crawlers::HttpContext)
     end
     
     it '设置爬虫、请求和响应' do
@@ -132,12 +135,14 @@ RSpec.describe Crawlee::HttpContext do
     end
     
     it '正确处理带有单引号或双引号的 URL' do
-      response_with_quotes = Crawlee::Response.new(request, 
-        status_code: 200,
-        headers: { 'Content-Type' => 'text/html; charset=UTF-8' },
-        body: '<html><body><a href="/page1">链接1</a><a href=\'/page2\'>链接2</a></body></html>'
+      # 使用位置参数而不是命名参数来创建 Response 对象
+      response_with_quotes = Crawlee::Response.new(
+        request, 
+        200,
+        { 'Content-Type' => 'text/html; charset=UTF-8' },
+        '<html><body><a href="/page1">链接1</a><a href=\'page2\'>链接2</a></body></html>'
       )
-      context_with_quotes = Crawlee::HttpContext.new(crawler, request, response_with_quotes)
+      context_with_quotes = Crawlee::Crawlers::HttpContext.new(crawler, request, response_with_quotes)
       
       expect(crawler).to receive(:enqueue).with('https://example.com/page1', {}).and_return(true)
       expect(crawler).to receive(:enqueue).with('https://example.com/page2', {}).and_return(true)
@@ -148,16 +153,16 @@ RSpec.describe Crawlee::HttpContext do
   end
 end
 
-RSpec.describe Crawlee::BrowserContext do
+RSpec.describe Crawlee::Crawlers::BrowserContext do
   let(:crawler) { double('BrowserCrawler') }
   let(:request) { Crawlee::Request.new('https://example.com') }
   let(:response) { double('Response', request: request) }
   let(:page) { double('Page') }
-  let(:context) { Crawlee::BrowserContext.new(crawler, request, response, page) }
+  let(:context) { Crawlee::Crawlers::BrowserContext.new(crawler, request, response, page) }
   
   describe '#initialize' do
     it '创建一个浏览器上下文实例' do
-      expect(context).to be_a(Crawlee::BrowserContext)
+      expect(context).to be_a(Crawlee::Crawlers::BrowserContext)
     end
     
     it '设置爬虫、请求、响应和页面' do
