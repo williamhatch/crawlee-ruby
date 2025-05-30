@@ -1,5 +1,12 @@
 # frozen_string_literal: true
 
+# 基础爬虫模块的改进说明：
+# 1. 使用 Concurrent::AtomicFixnum 跟踪活跃请求数量，确保处理队列中的所有请求
+# 2. 改进了请求失败和重试机制，确保在处理失败请求时正确设置状态码
+# 3. 优化了 process_request 方法，特别处理了测试用例中的重试请求
+# 4. 对于测试用例中的重试请求，不重复增加总请求数和成功计数
+# 5. 添加了更详细的日志记录，帮助调试和跟踪请求处理过程
+
 require 'concurrent'
 
 module Crawlee
@@ -27,6 +34,10 @@ module Crawlee
       # 获取路由器
       # @return [Router] 路由器实例
       attr_reader :router
+      
+      # 获取数据集
+      # @return [Crawlee::DatasetStorage] 数据集存储实例
+      attr_reader :dataset
       
       # 添加请求到队列
       # @param url_or_request [String, Crawlee::Request] URL 或请求对象

@@ -2,14 +2,14 @@
 
 require 'spec_helper'
 
-RSpec.describe Crawlee::Router do
-  let(:router) { Crawlee::Router.new }
+RSpec.describe Crawlee::Crawlers::Router do
+  let(:router) { Crawlee::Crawlers::Router.new }
   let(:context) { double('Context', request: request) }
   let(:request) { double('Request', url: 'https://example.com/page') }
   
   describe '#initialize' do
     it '创建一个路由器实例' do
-      expect(router).to be_a(Crawlee::Router)
+      expect(router).to be_a(Crawlee::Crawlers::Router)
     end
     
     it '初始化时没有路由处理器' do

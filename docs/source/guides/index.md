@@ -6,8 +6,8 @@
 
 - [高级爬虫技巧](advanced_crawling.md) - 使用 Crawlee Ruby 进行高级爬虫开发的技巧和最佳实践
 - [处理动态内容](handling_dynamic_content.md) - 如何处理 JavaScript 渲染的动态内容
-- [代理和反爬虫](proxies_and_anti_scraping.md) - 使用代理和处理反爬虫机制
-- [数据存储和导出](data_storage_and_export.md) - 如何存储和导出爬取的数据
+- [代理和反爬虫指南](proxy_and_anti_scraping.md) - 配置代理服务器和应对常见的反爬虫技术
+- [数据存储和导出指南](data_storage_and_export.md) - 如何存储、管理和导出爬取的数据
 
 ## 进阶指南
 

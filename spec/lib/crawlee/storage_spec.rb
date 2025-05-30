@@ -88,7 +88,7 @@ RSpec.describe Crawlee::Storage do
   end
 end
 
-RSpec.describe Crawlee::DatasetStorage do
+RSpec.describe Crawlee::Storage::DatasetStorage do
   let(:storage_dir) { File.join('tmp', 'test_storage') }
   let(:dataset_name) { 'test_dataset' }
   let(:dataset) { Crawlee::Storage.open(storage_dir).dataset(dataset_name) }
@@ -175,7 +175,7 @@ RSpec.describe Crawlee::DatasetStorage do
   end
 end
 
-RSpec.describe Crawlee::RequestQueueStorage do
+RSpec.describe Crawlee::Storage::RequestQueueStorage do
   let(:storage_dir) { File.join('tmp', 'test_storage') }
   let(:queue_name) { 'test_queue' }
   let(:queue) { Crawlee::Storage.open(storage_dir).request_queue(queue_name) }

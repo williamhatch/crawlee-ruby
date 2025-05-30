@@ -1,0 +1,86 @@
+[
+  {
+    "crawler_type": "HttpCrawler",
+    "concurrency": 1,
+    "request_count": 10,
+    "time_seconds": 0.61,
+    "requests_per_second": 16.4
+  },
+  {
+    "crawler_type": "HttpCrawler",
+    "concurrency": 1,
+    "request_count": 50,
+    "time_seconds": 0.62,
+    "requests_per_second": 80.83
+  },
+  {
+    "crawler_type": "HttpCrawler",
+    "concurrency": 1,
+    "request_count": 100,
+    "time_seconds": 0.73,
+    "requests_per_second": 137.28
+  },
+  {
+    "crawler_type": "HttpCrawler",
+    "concurrency": 2,
+    "request_count": 10,
+    "time_seconds": 0.82,
+    "requests_per_second": 12.19
+  },
+  {
+    "crawler_type": "HttpCrawler",
+    "concurrency": 2,
+    "request_count": 50,
+    "time_seconds": 0.72,
+    "requests_per_second": 69.93
+  },
+  {
+    "crawler_type": "HttpCrawler",
+    "concurrency": 2,
+    "request_count": 100,
+    "time_seconds": 0.62,
+    "requests_per_second": 160.12
+  },
+  {
+    "crawler_type": "HttpCrawler",
+    "concurrency": 5,
+    "request_count": 10,
+    "time_seconds": 0.62,
+    "requests_per_second": 16.26
+  },
+  {
+    "crawler_type": "HttpCrawler",
+    "concurrency": 5,
+    "request_count": 50,
+    "time_seconds": 0.62,
+    "requests_per_second": 80.82
+  },
+  {
+    "crawler_type": "HttpCrawler",
+    "concurrency": 5,
+    "request_count": 100,
+    "time_seconds": 0.83,
+    "requests_per_second": 121.11
+  },
+  {
+    "crawler_type": "HttpCrawler",
+    "concurrency": 10,
+    "request_count": 10,
+    "time_seconds": 0.93,
+    "requests_per_second": 10.8
+  },
+  {
+    "crawler_type": "HttpCrawler",
+    "concurrency": 10,
+    "request_count": 50,
+    "time_seconds": 0.62,
+    "requests_per_second": 81.13
+  },
+  {
+    "crawler_type": "HttpCrawler",
+    "concurrency": 10,
+    "request_count": 100,
+    "time_seconds": 0.63,
+    "requests_per_second": 159.95
+  }
+]

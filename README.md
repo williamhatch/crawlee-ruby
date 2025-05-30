@@ -22,6 +22,9 @@ Official Crawlee versions:
     <a href="https://rubygems.org/gems/crawlee">
         <img src="https://img.shields.io/badge/ruby-%3E%3D%203.0.0-ruby.svg" alt="Ruby Version">
     </a>
+    <a href="/coverage/index.html">
+        <img src="https://img.shields.io/badge/coverage-56.14%25-yellow.svg" alt="Test Coverage">
+    </a>
 </p>
 
 Crawlee Ruby is a comprehensive web scraping and data extraction framework that helps you build reliable crawlers. Fast and efficient.
